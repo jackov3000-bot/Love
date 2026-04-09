@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glassmorphism Quiz</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        .main {
+            width: 100vw;
+            height: 100vh;
+            /* Прямая ссылка на фон с горами */
+            background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=1920');
+            background-size: cover;
+            background-position: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            background-blend-mode: darken;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 60px 20px;
+            box-sizing: border-box;
+        }
+
+        /* Эффект стекла */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            color: white;
+        }
+
+        .quiz-container {
+            width: 90%;
+            max-width: 1000px;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .quiz-container h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .answers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 1100px;
+            margin-bottom: 20px;
+        }
+
+        .answer-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+        }
+
+        .answer-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Стили для проверки ответов */
+        .correct {
+            background: rgba(40, 167, 69, 0.6) !important;
+            border-color: #28a745 !important;
+            box-shadow: 0 0 20px rgba(40, 167, 69, 0.5);
+        }
+
+        .wrong {
+            background: rgba(220, 53, 69, 0.6) !important;
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 20px rgba(220, 53, 69, 0.5);
+        }
+
+        .shape {
+            margin-right: 15px;
+            opacity: 0.8;
+            font-size: 1.3rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main">
+        <div class="quiz-container glass">
+            <h1 id="question-text">Загрузка вопроса...</h1>
+        </div>
+
+        <div class="answers-grid" id="answers-container">
+            </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Что обозначает имя существительное в русском языке?",
+                answers: ["Действие", "Предмет", "Признак предмета", "Количество"],
+                correct: 1 // Предмет
+            },
+            {
+                question: "Выберите вариант, в котором указаны только части речи:",
+                answers: [
+                    "Подлежащее, сказуемое, дополнение", 
+                    "Существительное, глагол, прилагательное", 
+                    "Корень, суффикс, окончание", 
+                    "Слово, предложение, абзац"
+                ],
+                correct: 1 // Существительное, глагол, прилагательное
+            },
+            {
+                question: "Что такое глагол и на какие вопросы он отвечает?",
+                answers: [
+                    "Часть речи, отвечает на вопросы: Кто? Что?", 
+                    "Часть речи, обозначает действие и отвечает на: Что делать? Что сделать?", 
+                    "Часть речи, обозначает признак и отвечает на: Какой? Какая?", 
+                    "Часть речи, обозначает количество и отвечает на: Сколько?"
+                ],
+                correct: 1 // Обозначает действие (Что делать? Что сделать?)
+            },
+            {
+                question: "Что такое корень слова и какой корень в слове 'Лесник'?",
+                answers: [
+                    "Изменяемая часть слова, корень — 'ик'", 
+                    "Часть слова, стоящая перед корнем, корень — 'Лесн'", 
+                    "Главная часть предложения, корень — 'Лесник'", 
+                    "Общая часть родственных слов, корень — 'Лес'"
+                ],
+                correct: 3 // Теперь правильный ответ последний
+            },
+            {
+                question: "Какие бывают предложения по цели высказывания и что они выражают?",
+                answers: [
+                    "Главные и второстепенные: выражают основу смысла", 
+                    "Простые и сложные: выражают количество основ", 
+                    "Повествовательные, вопросительные и побудительные: сообщают, спрашивают или просят", 
+                    "Восклицательные и невосклицательные: выражают эмоции"
+                ],
+                correct: 2 // Повествовательные, вопросительные и побудительные
+            },
+        ];
+
+        let currentQuestionIndex = 0;
+
+        function loadQuestion() {
+            const q = questions[currentQuestionIndex];
+            document.getElementById('question-text').innerText = q.question;
+            const container = document.getElementById('answers-container');
+            container.innerHTML = ''; 
+
+            const shapes = ['▲', '◆', '●', '■'];
+
+            q.answers.forEach((text, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn glass';
+                btn.innerHTML = `<span class="shape">${shapes[index]}</span> ${text}`;
+                btn.onclick = () => checkAnswer(index, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex, clickedBtn) {
+            const q = questions[currentQuestionIndex];
+            const correctIndex = q.correct;
+            const allBtns = document.querySelectorAll('.answer-btn');
+
+            // Блокируем клики на время анимации
+            allBtns.forEach(btn => btn.style.pointerEvents = 'none');
+
+            if (selectedIndex === correctIndex) {
+                clickedBtn.classList.add('correct');
+                
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < questions.length) {
+                        loadQuestion();
+                    } else {
+                        document.getElementById('question-text').innerText = "Поздравляю вас всех! Викторина пройдена! 🎉";
+                        document.getElementById('answers-container').innerHTML = "";
+                    }
+                }, 1200);
+            } else {
+                clickedBtn.classList.add('wrong');
+                
+                // Даем время увидеть ошибку и разрешаем попробовать снова без сброса
+                setTimeout(() => {
+                    clickedBtn.classList.remove('wrong');
+                    allBtns.forEach(btn => btn.style.pointerEvents = 'auto');
+                }, 1000);
+            }
+        }
+
+        // Запуск викторины
+        loadQuestion();
+    </script>
+</body>
+</html>
